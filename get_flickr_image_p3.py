@@ -1,4 +1,8 @@
-import urllib2
+"""
+    flickr image scraper works under python3
+"""
+
+import urllib.request
 import re
 import argparse
 import os
@@ -25,7 +29,8 @@ def get_image_links(search_term, page=1, per_page=60):
     # always finds 60. use different page number instead to download more images
     search_url = 'https://www.flickr.com/search/?q=' + search_term +\
                  '&per_page=' + str(per_page) + '&page=' + str(page)
-    response = urllib2.urlopen(search_url).read()
+    request = urllib.request.Request(search_url)
+    response = urllib.request.urlopen(request).read().decode()
     image_srcs = re.findall(r'data\-defer\-src\=\"(.+?)\"', response)
     image_srcs = list(filter(lambda x: 'https' in x, image_srcs)) # remove something like {{src}} 
     return image_srcs
@@ -37,7 +42,8 @@ def download_images(image_urls, file_name, file_path='',  file_name_start_index=
         index += 1 
 
 def download_image(url, file_name, file_path=''):
-    data = urllib2.urlopen(url).read()
+    request_url = urllib.request.Request(url)
+    data = urllib.request.urlopen(request_url).read()
     # check if path already exists and if not create a new folder
     if not ( file_path == '' ):
         if not os.path.isdir(file_path):
